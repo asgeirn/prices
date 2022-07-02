@@ -9,21 +9,21 @@ import pathlib
 
 d = []
 
-prevfile = pathlib.Path(f'{datetime.date.today() - datetime.timedelta(days=1)}.json')
+prevfile = pathlib.Path(f"{datetime.date.today() - datetime.timedelta(days=1)}.json")
 if prevfile.exists():
-    yesterday = json.load(open(prevfile, 'rt'))
+    yesterday = json.load(open(prevfile, "rt"))
     d += yesterday
 
-today = json.load(open(f'{datetime.date.today()}.json', 'rt'))
+today = json.load(open(f"{datetime.date.today()}.json", "rt"))
 d += today
 
-nextfile = pathlib.Path(f'{datetime.date.today() + datetime.timedelta(days=1)}.json')
+nextfile = pathlib.Path(f"{datetime.date.today() + datetime.timedelta(days=1)}.json")
 if nextfile.exists():
-    tomorrow = json.load(open(nextfile, 'rt'))
+    tomorrow = json.load(open(nextfile, "rt"))
     d += tomorrow
 
-index = pandas.DatetimeIndex([e['startsAt'] for e in d])
-data = [e['total'] for e in d]
+index = pandas.DatetimeIndex([e["startsAt"] for e in d])
+data = [e["total"] for e in d]
 prices = pandas.Series(data=data, index=index)
 print(prices)
 
@@ -47,10 +47,10 @@ data = [record.get_value() for table in tables for record in table.records]
 consumption = pandas.Series(data=data, index=index)
 print(consumption)
 
-cost = consumption.combine(prices, lambda x,y: x*y/1000)
+cost = consumption.combine(prices, lambda x, y: x * y / 1000)
 
 print(cost)
 
-#for table in tables:
+# for table in tables:
 #    for record in table.records:
 #        print(f"{record.get_time().astimezone(ZoneInfo('Europe/Oslo'))} {record.get_value()}")
