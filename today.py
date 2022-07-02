@@ -7,7 +7,7 @@ import json
 import pathlib
 
 authorization = f'Bearer {os.environ["TIBBER_TOKEN"]}'
-query = '''
+query = """
 {
   viewer {
     homes {
@@ -22,16 +22,28 @@ query = '''
     }
   }
 }
-'''
+"""
 
-today = f'{datetime.date.today()}'
-url = 'https://api.tibber.com/v1-beta/gql'
-p = pathlib.Path(f'{today}.json')
+today = f"{datetime.date.today()}"
+url = "https://api.tibber.com/v1-beta/gql"
+p = pathlib.Path(f"{today}.json")
+
+
+def nettleie(it):
+    dt = datetime.datetime.fromisoformat(it["startsAt"])
+    if dt.hour in range(6, 22):
+        it["total"] = float(it["total"]) + 0.4725
+    else:
+        it["total"] = float(it["total"]) + 0.3525
+    return it
+
 
 if not p.is_file():
-    print(f'{datetime.datetime.now()}: Fetching {url} ... ', end='')
-    r = requests.post(url, data={'query': query}, headers={'Authorization': authorization})
-    print(f'{r.status_code}')
+    print(f"{datetime.datetime.now()}: Fetching {url} ... ", end="")
+    r = requests.post(url, data={"query": query}, headers={"Authorization": authorization})
+    print(f"{r.status_code}")
     if r.status_code == requests.codes.ok:
         data = r.json()
-        json.dump(data['data']['viewer']['homes'][0]['currentSubscription']['priceInfo']['today'], open(p, 'wt'))
+        result = data["data"]["viewer"]["homes"][0]["currentSubscription"]["priceInfo"]["today"]
+        if result:
+            json.dump([nettleie(it) for it in result], open(p, "wt"))
