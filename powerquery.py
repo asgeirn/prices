@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
 
-from influxdb_client import InfluxDBClient, Point, WritePrecision
-from zoneinfo import ZoneInfo
-import json
 import datetime
-import pandas
+import json
 import pathlib
 
+import pandas
+from influxdb_client import InfluxDBClient
+
 d = []
+
+tzinfo = datetime.datetime.now().astimezone().tzinfo
+start = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
 
 prevfile = pathlib.Path(f"{datetime.date.today() - datetime.timedelta(days=1)}.json")
 if prevfile.exists():
     yesterday = json.load(open(prevfile, "rt"))
     d += yesterday
+    start -= datetime.timedelta(days=1)
 
 today = json.load(open(f"{datetime.date.today()}.json", "rt"))
 d += today
@@ -22,27 +26,28 @@ if nextfile.exists():
     tomorrow = json.load(open(nextfile, "rt"))
     d += tomorrow
 
-index = pandas.DatetimeIndex([e["startsAt"] for e in d])
+index = pandas.DatetimeIndex(data=[e["startsAt"] for e in d], tz=tzinfo)
 data = [e["total"] for e in d]
 prices = pandas.Series(data=data, index=index)
 print(prices)
 
-bucket = "heater"
 client = InfluxDBClient.from_env_properties()
 query_api = client.query_api()
 
-query = """from(bucket: "heater")
-	|> range(start: -36h)
+query = f"""from(bucket: "heater")
+    |> range(start: {start.astimezone().isoformat()})
     |> filter(fn: (r) => r["_measurement"] == "consumption")
     |> filter(fn: (r) => r["_field"] == "power")
     |> window(every: 1h)
     |> integral(unit: 1m)
-    |> map(fn: (r) => ({r with _value: r._value / 60.0}))
+    |> map(fn: (r) => ({{r with _value: r._value / 60.0}}))
     |> duplicate(column: "_start", as: "_time")
     |> window(every: inf)"""
+
 tables = query_api.query(query)
 
-index = pandas.DatetimeIndex([record.get_time() for table in tables for record in table.records])
+
+index = pandas.DatetimeIndex(data=[record.get_time() for table in tables for record in table.records], tz=tzinfo)
 data = [record.get_value() for table in tables for record in table.records]
 consumption = pandas.Series(data=data, index=index)
 print(consumption)
@@ -50,6 +55,7 @@ print(consumption)
 cost = consumption.combine(prices, lambda x, y: x * y / 1000)
 
 print(cost)
+print(cost.sum())
 
 # for table in tables:
 #    for record in table.records:
