@@ -19,5 +19,10 @@ bucket = "heater"
 client = InfluxDBClient.from_env_properties()
 write_api = client.write_api(write_options=SYNCHRONOUS)
 
-point = Point("consumption").field("power", power).field("current", current).field("voltage", voltage)
+point = (
+    Point("consumption")
+    .field("power", power)
+    .field("current", current)
+    .field("voltage", voltage)
+)
 write_api.write(bucket=bucket, record=point)

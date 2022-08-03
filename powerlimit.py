@@ -24,7 +24,7 @@ if r.status_code == requests.codes.ok:
     consumption = series.sum()
     print(f"{consumption:.2f} kWh")
     if consumption > 4000.0:
-        print('Now at 80 percent limit!')
+        print("Now at 80 percent limit!")
         r = requests.put(f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": False})
         if r.status_code != requests.codes.ok:
             print(r)

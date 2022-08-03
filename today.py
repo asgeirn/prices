@@ -40,10 +40,14 @@ def nettleie(it):
 
 if not p.is_file():
     print(f"{datetime.datetime.now()}: Fetching {url} ... ", end="")
-    r = requests.post(url, data={"query": query}, headers={"Authorization": authorization})
+    r = requests.post(
+        url, data={"query": query}, headers={"Authorization": authorization}
+    )
     print(f"{r.status_code}")
     if r.status_code == requests.codes.ok:
         data = r.json()
-        result = data["data"]["viewer"]["homes"][0]["currentSubscription"]["priceInfo"]["today"]
+        result = data["data"]["viewer"]["homes"][0]["currentSubscription"]["priceInfo"][
+            "today"
+        ]
         if result:
             json.dump([nettleie(it) for it in result], open(p, "wt"))
