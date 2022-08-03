@@ -21,10 +21,12 @@ stop = datetime.datetime.combine(day, datetime.time.max)
 pricefile = json.load(open(f"{day}.json", "rt"))
 d += pricefile
 
-index = pandas.DatetimeIndex(data=[e["startsAt"] for e in d], tz=tzinfo)
+index = pandas.DatetimeIndex(data=[e["startsAt"] for e in d], tz="UTC").tz_convert(
+    tzinfo
+)
 data = [e["total"] for e in d]
 prices = pandas.Series(data=data, index=index)
-#print(prices)
+# print(prices)
 
 client = InfluxDBClient.from_env_properties()
 query_api = client.query_api()
@@ -43,15 +45,15 @@ tables = query_api.query(query)
 
 
 index = pandas.DatetimeIndex(
-    data=[record.get_time() for table in tables for record in table.records], tz=tzinfo
-)
+    data=[record.get_time() for table in tables for record in table.records]
+).tz_convert(tzinfo)
 data = [record.get_value() for table in tables for record in table.records]
 consumption = pandas.Series(data=data, index=index)
-#print(consumption)
+# print(consumption)
 
 cost = consumption.combine(prices, lambda x, y: x * y / 1000)
 
-#print(cost)
+# print(cost)
 print(f"{day} {cost.sum()}")
 
 # for table in tables:
