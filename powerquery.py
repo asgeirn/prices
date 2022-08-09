@@ -54,7 +54,7 @@ consumption = pandas.Series(data=data, index=index)
 cost = consumption.combine(prices, lambda x, y: x * y / 1000)
 
 # print(cost)
-print(f"{day} {cost.sum()}")
+print(f"{day} {cost.sum():.03f} kr, {consumption.sum() / 1000.0:.03f} kWh")
 
 # for table in tables:
 #    for record in table.records:
