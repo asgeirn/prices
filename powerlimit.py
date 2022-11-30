@@ -15,14 +15,16 @@ authorization = f'Bearer {os.environ["OSS_TOKEN"]}'
 url = f'{os.environ["OSS_ENDPOINT"]}/{startTime.isoformat()}Z/{endTime.isoformat()}Z/Minute'
 
 r = requests.get(url, headers={"Authorization": authorization})
-#print(f"{url} :: {r.status_code}")
+# print(f"{url} :: {r.status_code}")
 if r.status_code == requests.codes.ok:
     data = r.json()
     index = pandas.DatetimeIndex(data=[e["fromTime"] for e in data], tz=tzinfo)
     values = [e["activeEnergy"]["input"] for e in data]
     series = pandas.Series(index=index, data=values)
     consumption = series.sum()
-    print(f"{datetime.datetime.now().isoformat(sep=' ', timespec='minutes')} {consumption:.2f} Wh")
+    print(
+        f"{datetime.datetime.now().isoformat(sep=' ', timespec='minutes')} {consumption:.2f} Wh"
+    )
     if consumption > 4000.0:
         print("Now at 80 percent limit!")
         r = requests.put(f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": False})

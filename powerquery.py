@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import datetime
-import json
+import pathlib
 import sys
 
 import pandas
@@ -10,7 +10,6 @@ from influxdb_client import InfluxDBClient
 d = []
 
 day = datetime.date.today() - datetime.timedelta(days=1)
-tzinfo = datetime.datetime.now().astimezone().tzinfo
 
 if len(sys.argv) > 1:
     day = datetime.date.fromisoformat(sys.argv[1])
@@ -18,14 +17,8 @@ if len(sys.argv) > 1:
 start = datetime.datetime.combine(day, datetime.time.min)
 stop = datetime.datetime.combine(day, datetime.time.max)
 
-pricefile = json.load(open(f"{day}.json", "rt"))
-d += pricefile
-
-index = pandas.DatetimeIndex(data=[e["startsAt"] for e in d], tz="UTC").tz_convert(
-    tzinfo
-)
-data = [e["total"] for e in d]
-prices = pandas.Series(data=data, index=index)
+pricefile = pathlib.Path(f"{day}.json")
+prices = pandas.read_json(path_or_buf=pricefile, orient="index", typ="series")
 # print(prices)
 
 client = InfluxDBClient.from_env_properties()
@@ -46,7 +39,7 @@ tables = query_api.query(query)
 
 index = pandas.DatetimeIndex(
     data=[record.get_time() for table in tables for record in table.records]
-).tz_convert(tzinfo)
+)
 data = [record.get_value() for table in tables for record in table.records]
 consumption = pandas.Series(data=data, index=index)
 # print(consumption)

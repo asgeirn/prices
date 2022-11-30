@@ -11,28 +11,18 @@ import subprocess
 
 def calculate():
     try:
-        d = []
-
-        prevfile = pathlib.Path(
-            f"{datetime.date.today() - datetime.timedelta(days=1)}.json"
-        )
-        if prevfile.exists():
-            yesterday = json.load(open(prevfile, "rt"))
-            d += yesterday
-
-        today = json.load(open(f"{datetime.date.today()}.json", "rt"))
-        d += today
-
-        nextfile = pathlib.Path(
-            f"{datetime.date.today() + datetime.timedelta(days=1)}.json"
-        )
-        if nextfile.exists():
-            tomorrow = json.load(open(nextfile, "rt"))
-            d += tomorrow
-
-        index = pandas.DatetimeIndex([e["startsAt"] for e in d])
-        data = [e["total"] for e in d]
-        series = pandas.Series(data=data, index=index)
+        files = [
+            f"{datetime.date.today() - datetime.timedelta(days=1)}.json",
+            f"{datetime.date.today()}.json",
+            f"{datetime.date.today() + datetime.timedelta(days=1)}.json",
+        ]
+        paths = [pathlib.Path(it) for it in files]
+        inputs = [
+            pandas.read_json(path_or_buf=p, orient="index", typ="series")
+            for p in paths
+            if p.exists()
+        ]
+        series = pandas.concat(inputs)
         now = pandas.Timestamp.now("Europe/Oslo").replace(
             minute=0, second=0, microsecond=0
         )
