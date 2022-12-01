@@ -18,7 +18,9 @@ start = datetime.datetime.combine(day, datetime.time.min)
 stop = datetime.datetime.combine(day, datetime.time.max)
 
 pricefile = pathlib.Path(f"{day}.json")
-prices = pandas.read_json(path_or_buf=pricefile, orient="index", typ="series")
+prices = pandas.read_json(
+    path_or_buf=pricefile, orient="index", typ="series"
+).tz_localize("UTC")
 # print(prices)
 
 client = InfluxDBClient.from_env_properties()
