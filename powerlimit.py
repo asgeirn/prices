@@ -6,8 +6,11 @@ import datetime
 import pandas
 import subprocess
 
-startTime = datetime.datetime.utcnow().replace(minute=0, second=0, microsecond=0)
+currentTime = datetime.datetime.utcnow()
+startTime = currentTime.replace(minute=0, second=0, microsecond=0)
 endTime = startTime + datetime.timedelta(hours=1)
+
+progress = (currentTime - startTime).seconds / (endTime - startTime).seconds
 
 tzinfo = startTime.astimezone().tzinfo
 
@@ -22,11 +25,12 @@ if r.status_code == requests.codes.ok:
     values = [e["activeEnergy"]["input"] for e in data]
     series = pandas.Series(index=index, data=values)
     consumption = series.sum()
+    estimate = consumption / progress
     print(
-        f"{datetime.datetime.now().isoformat(sep=' ', timespec='minutes')} {consumption:.2f} Wh"
+        f"{datetime.datetime.now().isoformat(sep=' ', timespec='minutes')} {consumption:.2f} (estimate {estimate:.2f}) Wh"
     )
-    if consumption > 4000.0:
-        print("Now at 80 percent limit!")
+    if consumption > 4000.0 or estimate > 5000.0:
+        print("Power limit!")
         r = requests.put(f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": False})
         if r.status_code != requests.codes.ok:
             print(r)
