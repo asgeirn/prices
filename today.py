@@ -92,4 +92,4 @@ if not p.is_file():
     grid = get_grid()
     power = get_power()
     cost = power.combine(grid, addfloat)
-    cost.to_json(path_or_buf=p, date_format="iso", indent=2)
+    cost.to_json(path_or_buf=p, date_format="iso")
