@@ -26,11 +26,11 @@ if r.status_code == requests.codes.ok:
     series = pandas.Series(index=index, data=values)
     consumption = series.sum()
     estimate = consumption / progress
+    limit = consumption > 4000.0 or estimate > 5000.0
     print(
-        f"{datetime.datetime.now().isoformat(sep=' ', timespec='minutes')} {consumption:.2f} (estimate {estimate:.2f}) Wh"
+        f"{datetime.datetime.now().isoformat(sep=' ', timespec='minutes')} {consumption:.2f} (estimate {estimate:.2f}) Wh [{len(series)} items] {'!!!' if limit else ''}"
     )
-    if consumption > 4000.0 or estimate > 5000.0:
-        print("Power limit!")
+    if limit:
         r = requests.put(f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": False})
         if r.status_code != requests.codes.ok:
             print(r)

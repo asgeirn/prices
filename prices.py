@@ -4,6 +4,7 @@ import datetime
 import os
 import pathlib
 
+import numpy
 import pandas
 import requests
 
@@ -80,8 +81,15 @@ def get_grid():
 tomorrow = f"{datetime.date.today() + datetime.timedelta(days=1)}"
 p = pathlib.Path(f"{tomorrow}.json")
 
+def addfloat(x, y):
+    if not isinstance(x, numpy.float64):
+        raise Exception(f"{x} is not numeric")
+    if not isinstance(y, numpy.float64):
+        raise Exception(f"{y} is not numeric")
+    return x + y
+
 if not p.is_file():
     grid = get_grid()
     power = get_power()
-    cost = power.combine(grid, lambda x, y: x + y)
+    cost = power.combine(grid, addfloat)
     cost.to_json(path_or_buf=p, date_format="iso", indent=2)
