@@ -27,7 +27,7 @@ def calculate():
             minute=0, second=0, microsecond=0
         )
         prev = now - pandas.Timedelta(hours=2)
-        horizon = now + pandas.Timedelta(hours=4)
+        horizon = now + pandas.Timedelta(hours=2)
         # print(series[prev:horizon])
         current = series[now]
         future = series[prev:horizon].mean()
