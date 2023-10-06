@@ -80,7 +80,7 @@ def get_grid():
     else:
         print("Using fallback for nettleie - you should check that they are correct!")
         index = pandas.DatetimeIndex(pandas.date_range(start=day, end=nextday, freq='1H', inclusive='left', tz=tzinfo))
-        data = [ 0.35, 0.35, 0.35, 0.35, 0.35, 0.35, 0.47, 0.47, 0.47, 0.47, 0.47, 0.47, 0.47, 0.47, 0.47, 0.47, 0.47, 0.47, 0.47, 0.47, 0.47, 0.47, 0.35, 0.35 ]
+        data = [ 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.38, 0.38 ]
         series = pandas.Series(index=index, data=data)
         return series
 
