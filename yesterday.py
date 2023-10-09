@@ -8,6 +8,7 @@ import numpy
 import pandas
 import requests
 
+from grid import get_grid
 
 def get_power():
     authorization = f'Bearer {os.environ["TIBBER_TOKEN"]}'
@@ -45,45 +46,6 @@ def get_power():
     series = pandas.Series(index=index, data=[e["total"] for e in result])
     return series
 
-
-def get_grid():
-    tzinfo = datetime.datetime.now().astimezone().tzinfo
-    day = datetime.date.today() - datetime.timedelta(days=1)
-    nextday = day+datetime.timedelta(days=1)
-
-    apiToken = os.environ["GRID_TOKEN"]
-    baseUri = os.environ["GRID_URI"]
-    tariffKey = os.environ["GRID_TARIFF_KEY"]
-    url = f"{baseUri}/api/1.0/tariffquery"
-    print(f"{datetime.datetime.now()}: Fetching {url} ... ", end="", flush=True)
-    r = requests.get(
-        url,
-        params={
-            "TariffKey": tariffKey,
-            "StartTime": f"{day.isoformat()}T00:00:00Z",
-            "EndTime": f"{nextday.isoformat()}T00:00:00Z",
-        },
-        headers={"X-API-Key": apiToken},
-    )
-    print(f"{r.status_code}")
-    if r.status_code == 200:
-        data = r.json()
-        result = [
-            {"from": it["startTime"], "price": it["energyPrice"]["total"]}
-            for it in data["gridTariff"]["tariffPrice"]["hours"]
-        ]
-        index = pandas.DatetimeIndex([e["from"] for e in result], tz="UTC").tz_convert(
-            tzinfo
-        )
-        series = pandas.Series(index=index, data=[e["price"] for e in result])
-        return series
-    else:
-        print("Using fallback for nettleie - you should check that they are correct!")
-        index = pandas.DatetimeIndex(pandas.date_range(start=day, end=nextday, freq='1H', inclusive='left', tz=tzinfo))
-        data = [ 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.38, 0.38 ]
-        series = pandas.Series(index=index, data=data)
-        return series
-
 yesterday = datetime.date.today() - datetime.timedelta(days=1)
 p = pathlib.Path(f"{yesterday}.json")
 
@@ -96,13 +58,13 @@ def addfloat(x, y):
 
 if not p.is_file():
     tzinfo = datetime.datetime.now().astimezone().tzinfo
+    day = datetime.date.today() - datetime.timedelta(days=1)
+    nextday = day+datetime.timedelta(days=1)
     start = pandas.Timestamp.today(tz=tzinfo).normalize()
     end = start - pandas.Timedelta(1, 'hour')
     start = start - pandas.Timedelta(1, 'day')
-    print(start)
-    print(end)
     power = get_power()[start : end]
-    grid = get_grid()
+    grid = get_grid(day, nextday, tzinfo)
     cost = power.combine(grid, addfloat)
     print(cost)
     cost.to_json(path_or_buf=p, date_format="iso")
