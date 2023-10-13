@@ -26,7 +26,7 @@ if r.status_code == requests.codes.ok:
     series = pandas.Series(index=index, data=values)
     consumption = series.sum()
     estimate = consumption / progress
-    limit = consumption > 8000.0 or estimate > 9000.0
+    limit = consumption > 4000.0 or estimate > 4500.0
     print(
         f"{datetime.datetime.now().isoformat(sep=' ', timespec='minutes')} {consumption:.2f} (estimate {estimate:.2f}) Wh [{len(series)} items] {'!!!' if limit else ''}"
     )
