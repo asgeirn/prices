@@ -38,6 +38,8 @@ def get_power():
     print(f"{r.status_code}")
     r.raise_for_status()
     data = r.json()
+    if len(data['errors']) > 0:
+        raise RuntimeError(data['errors'][0]['message'])
     result = data["data"]["viewer"]["homes"][0]["currentSubscription"]["priceInfo"]["range"]["nodes"]
     tzinfo = datetime.datetime.now().astimezone().tzinfo
     index = pandas.DatetimeIndex([e["startsAt"] for e in result], tz="UTC").tz_convert(

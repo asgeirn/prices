@@ -4,7 +4,7 @@ import requests
 import pandas
 
 def grid_fallback(day, nextday, tzinfo):
-    print("Using fallback for nettleie - you should check that they are correct!")
+    print(f"{datetime.datetime.now()}: Using fallback for nettleie - you should check that they are correct!")
     index = pandas.DatetimeIndex(pandas.date_range(start=day, end=nextday, freq='1H', inclusive='left', tz=tzinfo))
     data = [ 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.38, 0.38 ]
     series = pandas.Series(index=index, data=data)
