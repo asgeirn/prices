@@ -10,6 +10,7 @@ import requests
 
 from grid import get_grid
 
+
 def get_power():
     authorization = f'Bearer {os.environ["TIBBER_TOKEN"]}'
     query = """
@@ -38,9 +39,11 @@ def get_power():
     print(f"{r.status_code}")
     r.raise_for_status()
     data = r.json()
-    if len(data['errors']) > 0:
-        raise RuntimeError(data['errors'][0]['message'])
-    result = data["data"]["viewer"]["homes"][0]["currentSubscription"]["priceInfo"]["range"]["nodes"]
+    if len(data["errors"]) > 0:
+        raise RuntimeError(data["errors"][0]["message"])
+    result = data["data"]["viewer"]["homes"][0]["currentSubscription"]["priceInfo"][
+        "range"
+    ]["nodes"]
     tzinfo = datetime.datetime.now().astimezone().tzinfo
     index = pandas.DatetimeIndex([e["startsAt"] for e in result], tz="UTC").tz_convert(
         tzinfo
@@ -48,8 +51,10 @@ def get_power():
     series = pandas.Series(index=index, data=[e["total"] for e in result])
     return series
 
+
 yesterday = datetime.date.today() - datetime.timedelta(days=1)
 p = pathlib.Path(f"{yesterday}.json")
+
 
 def addfloat(x, y):
     if not isinstance(x, numpy.float64):
@@ -58,14 +63,15 @@ def addfloat(x, y):
         raise Exception(f"{y} is not numeric")
     return x + y
 
+
 if not p.is_file():
     tzinfo = datetime.datetime.now().astimezone().tzinfo
     day = datetime.date.today() - datetime.timedelta(days=1)
-    nextday = day+datetime.timedelta(days=1)
+    nextday = day + datetime.timedelta(days=1)
     start = pandas.Timestamp.today(tz=tzinfo).normalize()
-    end = start - pandas.Timedelta(1, 'hour')
-    start = start - pandas.Timedelta(1, 'day')
-    power = get_power()[start : end]
+    end = start - pandas.Timedelta(1, "hour")
+    start = start - pandas.Timedelta(1, "day")
+    power = get_power()[start:end]
     grid = get_grid(day, nextday, tzinfo)
     cost = power.combine(grid, addfloat)
     print(cost)

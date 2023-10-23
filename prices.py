@@ -10,6 +10,7 @@ import requests
 
 from grid import get_grid
 
+
 def get_power():
     authorization = f'Bearer {os.environ["TIBBER_TOKEN"]}'
     query = """
@@ -36,8 +37,8 @@ def get_power():
     print(f"{r.status_code}")
     r.raise_for_status()
     data = r.json()
-    if len(data['errors']) > 0:
-        raise RuntimeError(data['errors'][0]['message'])
+    if len(data["errors"]) > 0:
+        raise RuntimeError(data["errors"][0]["message"])
     result = data["data"]["viewer"]["homes"][0]["currentSubscription"]["priceInfo"][
         "tomorrow"
     ]
@@ -52,6 +53,7 @@ def get_power():
 tomorrow = f"{datetime.date.today() + datetime.timedelta(days=1)}"
 p = pathlib.Path(f"{tomorrow}.json")
 
+
 def addfloat(x, y):
     if not isinstance(x, numpy.float64):
         raise Exception(f"{x} is not numeric")
@@ -59,9 +61,10 @@ def addfloat(x, y):
         raise Exception(f"{y} is not numeric")
     return x + y
 
+
 if not p.is_file():
     day = datetime.date.today() + datetime.timedelta(days=1)
-    nextday = day+datetime.timedelta(days=1)
+    nextday = day + datetime.timedelta(days=1)
     tzinfo = datetime.datetime.now().astimezone().tzinfo
     power = get_power()
     grid = get_grid(day, nextday, tzinfo)

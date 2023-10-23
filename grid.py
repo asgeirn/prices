@@ -3,12 +3,45 @@ import datetime
 import requests
 import pandas
 
+
 def grid_fallback(day, nextday, tzinfo):
-    print(f"{datetime.datetime.now()}: Using fallback for nettleie - you should check that they are correct!")
-    index = pandas.DatetimeIndex(pandas.date_range(start=day, end=nextday, freq='1H', inclusive='left', tz=tzinfo))
-    data = [ 0.38, 0.38, 0.38, 0.38, 0.38, 0.38, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.50, 0.38, 0.38 ]
+    print(
+        f"{datetime.datetime.now()}: Using fallback for nettleie - you should check that they are correct!"
+    )
+    index = pandas.DatetimeIndex(
+        pandas.date_range(
+            start=day, end=nextday, freq="1H", inclusive="left", tz=tzinfo
+        )
+    )
+    data = [
+        0.38,
+        0.38,
+        0.38,
+        0.38,
+        0.38,
+        0.38,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.50,
+        0.38,
+        0.38,
+    ]
     series = pandas.Series(index=index, data=data)
     return series
+
 
 def get_grid(day, nextday, tzinfo):
     apiToken = os.environ["GRID_TOKEN"]
