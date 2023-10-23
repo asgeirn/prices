@@ -15,10 +15,9 @@ progress = (currentTime - startTime).seconds / (endTime - startTime).seconds
 tzinfo = startTime.astimezone().tzinfo
 
 authorization = f'Bearer {os.environ["OSS_TOKEN"]}'
-url = f'{os.environ["OSS_ENDPOINT"]}/{startTime.isoformat()}Z/{endTime.isoformat()}Z/Minute'
+url = f'{os.environ["OSS_ENDPOINT"]}/{startTime.isoformat()}Z/{endTime.isoformat()}Z/1'
 
-r = requests.get(url, headers={"Authorization": authorization})
-# print(f"{url} :: {r.status_code}")
+r = requests.get(url, headers={"Authorization": authorization, "Accept": "*/*", "User-Agent": "insomnia/2023.5.8"})
 if r.status_code == requests.codes.ok:
     data = r.json()
     index = pandas.DatetimeIndex(data=[e["fromTime"] for e in data], tz=tzinfo)
@@ -37,3 +36,6 @@ if r.status_code == requests.codes.ok:
             subprocess.run(["./blink1-tool", "-q", "--yellow"])
         else:
             subprocess.run(["./blink1-tool", "-q", "--blue"])
+else:
+    print(f"{url} :: {r.status_code}")
+    print(r.text)

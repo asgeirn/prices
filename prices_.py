@@ -18,7 +18,7 @@ def get_power(day: datetime.date):
     r.raise_for_status()
     result = r.json()
     tzinfo = datetime.datetime.now().astimezone().tzinfo
-    index = pandas.DatetimeIndex([e["time_start"] for e in result]).tz_convert(
+    index = pandas.DatetimeIndex([e["time_start"] for e in result], tz="UTC").tz_convert(
         tzinfo
     )
     series = pandas.Series(index=index, data=[e["NOK_per_kWh"] * 1.25 for e in result])
