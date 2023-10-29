@@ -3,11 +3,7 @@ import datetime
 import requests
 import pandas
 
-
 def grid_fallback(day, nextday, tzinfo):
-    print(
-        f"{datetime.datetime.now()}: Using fallback for nettleie - you should check that they are correct!"
-    )
     index = pandas.DatetimeIndex(
         pandas.date_range(
             start=day, end=nextday, freq="1H", inclusive="left", tz=tzinfo
@@ -39,11 +35,12 @@ def grid_fallback(day, nextday, tzinfo):
         0.38,
         0.38,
     ]
-    series = pandas.Series(index=index, data=data)
+    series = pandas.Series(index=index, data=data).tz_convert(tz='Europe/Oslo')
     return series
 
 
 def get_grid(day, nextday, tzinfo):
+    fallback = grid_fallback(day, nextday, tzinfo)
     apiToken = os.environ["GRID_TOKEN"]
     baseUri = os.environ["GRID_URI"]
     tariffKey = os.environ["GRID_TARIFF_KEY"]
@@ -66,11 +63,12 @@ def get_grid(day, nextday, tzinfo):
             for it in data["gridTariff"]["tariffPrice"]["hours"]
         ]
         if len(result) == 0:
-            return grid_fallback(day, nextday, tzinfo)
-        index = pandas.DatetimeIndex([e["from"] for e in result], tz="UTC").tz_convert(
-            tzinfo
-        )
-        series = pandas.Series(index=index, data=[e["price"] for e in result])
-        return series
+            return fallback
+        dt = pandas.to_datetime([e["from"] for e in result], utc=True)
+        index = pandas.DatetimeIndex(dt)
+        series = pandas.Series(index=index, data=[e["price"] for e in result]).tz_convert(tz='Europe/Oslo')
+        print(series)
+        print(fallback)
+        return series.combine_first(fallback)
     else:
-        return grid_fallback(day, nextday, tzinfo)
+        return fallback
