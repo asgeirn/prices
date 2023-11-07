@@ -3,10 +3,10 @@ import datetime
 import requests
 import pandas
 
-def grid_fallback(day, nextday, tzinfo):
+def grid_fallback(day, nextday):
     index = pandas.DatetimeIndex(
         pandas.date_range(
-            start=day, end=nextday, freq="1H", inclusive="left", tz=tzinfo
+            start=day, end=nextday, freq="1H", inclusive="left", tz='Europe/Oslo'
         )
     )
     data = [
@@ -35,12 +35,12 @@ def grid_fallback(day, nextday, tzinfo):
         0.38,
         0.38,
     ]
-    series = pandas.Series(index=index, data=data).tz_convert(tz='Europe/Oslo')
+    series = pandas.Series(index=index, data=data)
     return series
 
 
-def get_grid(day, nextday, tzinfo):
-    fallback = grid_fallback(day, nextday, tzinfo)
+def get_grid(day, nextday):
+    fallback = grid_fallback(day, nextday)
     apiToken = os.environ["GRID_TOKEN"]
     baseUri = os.environ["GRID_URI"]
     tariffKey = os.environ["GRID_TARIFF_KEY"]
@@ -67,8 +67,12 @@ def get_grid(day, nextday, tzinfo):
         dt = pandas.to_datetime([e["from"] for e in result], utc=True)
         index = pandas.DatetimeIndex(dt)
         series = pandas.Series(index=index, data=[e["price"] for e in result]).tz_convert(tz='Europe/Oslo')
-        print(series)
-        print(fallback)
         return series.combine_first(fallback)
     else:
         return fallback
+
+if __name__ == "__main__":
+    print("Hello, there!")
+    day = datetime.date.today()
+    nextday = day + datetime.timedelta(days=1)
+    print(get_grid(day, nextday))

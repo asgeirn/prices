@@ -11,7 +11,7 @@ import requests
 from grid import get_grid
 
 
-def get_power(day: datetime.date, tzinfo: datetime.tzinfo):
+def get_power(day: datetime.date):
     url = f"https://www.hvakosterstrommen.no/api/v1/prices/{day.strftime('%Y/%m-%d')}_NO1.json"
     print(f"{datetime.datetime.now()}: Fetching {url} ... ", end="", flush=True)
     r = requests.get(url)
@@ -19,9 +19,8 @@ def get_power(day: datetime.date, tzinfo: datetime.tzinfo):
     r.raise_for_status()
     result = r.json()
     dt = pandas.to_datetime([e["time_start"] for e in result], utc=True)
-    print(dt)
     index = pandas.DatetimeIndex(dt)
-    series = pandas.Series(index=index, data=[e["NOK_per_kWh"] * 1.25 for e in result])
+    series = pandas.Series(index=index, data=[e["NOK_per_kWh"] * 1.25 for e in result]).tz_convert(tz='Europe/Oslo')
     return series
 
 
@@ -42,8 +41,7 @@ p = pathlib.Path(f"{day}.json")
 
 if not p.is_file():
     nextday = day + datetime.timedelta(days=1)
-    tzinfo = datetime.datetime.now().astimezone().tzinfo
-    power = get_power(day, tzinfo)
-    grid = get_grid(day, nextday, tzinfo)
+    power = get_power(day)
+    grid = get_grid(day, nextday)
     cost = power.combine(grid, addfloat)
     cost.to_json(path_or_buf=p, date_format="iso")
