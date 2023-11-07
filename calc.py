@@ -26,13 +26,15 @@ def calculate():
             minute=0, second=0, microsecond=0
         )
         prev = now - pandas.Timedelta(hours=2)
-        horizon = now + pandas.Timedelta(hours=2)
-        # print(series[prev:horizon])
+        next = now + pandas.Timedelta(hours=2)
+        horizon = now + pandas.Timedelta(hours=6)
+        # print(series[prev:next])
         current = series[now]
-        future = series[prev:horizon].mean()
-        state = bool(current < future)
+        short = series[prev:next].mean()
+        long = series[now:horizon].mean()
+        state = bool(current < short) | bool(current < long)
         print(
-            f'{datetime.datetime.now()}: {current:.4f} vs {future:.4f} - turning heater {"ON" if state else "OFF"}'
+            f'{datetime.datetime.now()}: {current:.4f} vs {short:.4f} or {long:.4f} - turning heater {"ON" if state else "OFF"}'
         )
         return state
     except Exception as e:
