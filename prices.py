@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import datetime
-import os
 import pathlib
+import sys
 
 import numpy
 import pandas
@@ -11,47 +11,17 @@ import requests
 from grid import get_grid
 
 
-def get_power():
-    authorization = f'Bearer {os.environ["TIBBER_TOKEN"]}'
-    query = """
-  {
-    viewer {
-      homes {
-        currentSubscription{
-          priceInfo{
-            tomorrow {
-              total
-              startsAt
-            }
-          }
-        }
-      }
-    }
-  }
-  """
-    url = "https://api.tibber.com/v1-beta/gql"
+def get_power(day: datetime.date):
+    url = f"https://www.hvakosterstrommen.no/api/v1/prices/{day.strftime('%Y/%m-%d')}_NO1.json"
     print(f"{datetime.datetime.now()}: Fetching {url} ... ", end="", flush=True)
-    r = requests.post(
-        url, data={"query": query}, headers={"Authorization": authorization}
-    )
+    r = requests.get(url)
     print(f"{r.status_code}")
     r.raise_for_status()
-    data = r.json()
-    if len(data["errors"]) > 0:
-        raise RuntimeError(data["errors"][0]["message"])
-    result = data["data"]["viewer"]["homes"][0]["currentSubscription"]["priceInfo"][
-        "tomorrow"
-    ]
-    tzinfo = datetime.datetime.now().astimezone().tzinfo
-    index = pandas.DatetimeIndex([e["startsAt"] for e in result], tz="UTC").tz_convert(
-        tzinfo
-    )
-    series = pandas.Series(index=index, data=[e["total"] for e in result])
+    result = r.json()
+    dt = pandas.to_datetime([e["time_start"] for e in result], utc=True)
+    index = pandas.DatetimeIndex(dt)
+    series = pandas.Series(index=index, data=[e["NOK_per_kWh"] * 1.25 for e in result]).tz_convert(tz='Europe/Oslo')
     return series
-
-
-tomorrow = f"{datetime.date.today() + datetime.timedelta(days=1)}"
-p = pathlib.Path(f"{tomorrow}.json")
 
 
 def addfloat(x, y):
@@ -61,12 +31,17 @@ def addfloat(x, y):
         raise Exception(f"{y} is not numeric")
     return x + y
 
+day = datetime.date.today() + datetime.timedelta(days=1)
+if len(sys.argv) > 1:
+    if sys.argv[1] == "--today":
+        day = datetime.date.today()
+    elif sys.argv[1] == "--yesterday":
+        day = datetime.date.today() - datetime.timedelta(days=1)
+p = pathlib.Path(f"{day}.json")
 
 if not p.is_file():
-    day = datetime.date.today() + datetime.timedelta(days=1)
     nextday = day + datetime.timedelta(days=1)
-    tzinfo = datetime.datetime.now().astimezone().tzinfo
-    power = get_power()
-    grid = get_grid(day, nextday, tzinfo)
+    power = get_power(day)
+    grid = get_grid(day, nextday)
     cost = power.combine(grid, addfloat)
     cost.to_json(path_or_buf=p, date_format="iso")
