@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
-import json
 import datetime
 import os
-import pandas
 import pathlib
-import requests
 import subprocess
 
+import pandas
+import requests
 
 def calculate():
     try:
@@ -42,13 +41,13 @@ def calculate():
 
 
 state = calculate()
-r = requests.put(f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": state})
+r = requests.put(f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": state}, timeout=10)
 # data = r.json()
 # print(data)
 if r.status_code != requests.codes.ok:
     print(r)
-    subprocess.run(["./blink1-tool", "-q", "--yellow"])
+    subprocess.run(["./blink1-tool", "-q", "--yellow"], check=False)
 elif state:
-    subprocess.run(["./blink1-tool", "-q", "--red"])
+    subprocess.run(["./blink1-tool", "-q", "--red"], check=False)
 else:
-    subprocess.run(["./blink1-tool", "-q", "--green"])
+    subprocess.run(["./blink1-tool", "-q", "--green"], check=False)

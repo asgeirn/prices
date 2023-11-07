@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-import requests
 import os
 import datetime
-import pandas
 import subprocess
+
+import pandas
+import requests
 
 currentTime = datetime.datetime.utcnow()
 startTime = currentTime.replace(minute=0, second=0, microsecond=0)
@@ -24,6 +25,7 @@ r = requests.get(
         "Accept": "*/*",
         "User-Agent": "insomnia/2023.5.8",
     },
+    timeout=30,
 )
 if r.status_code == requests.codes.ok:
     data = r.json()
@@ -37,12 +39,14 @@ if r.status_code == requests.codes.ok:
         f"{datetime.datetime.now().isoformat(sep=' ', timespec='minutes')} {consumption:.2f} (estimate {estimate:.2f}) Wh [{len(series)} items] {'!!!' if limit else ''}"
     )
     if limit:
-        r = requests.put(f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": False})
+        r = requests.put(
+            f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": False}, timeout=10
+        )
         if r.status_code != requests.codes.ok:
             print(r)
-            subprocess.run(["./blink1-tool", "-q", "--yellow"])
+            subprocess.run(["./blink1-tool", "-q", "--yellow"], check=False)
         else:
-            subprocess.run(["./blink1-tool", "-q", "--blue"])
+            subprocess.run(["./blink1-tool", "-q", "--blue"], check=False)
 else:
     print(f"{url} :: {r.status_code}")
     print(r.text)
