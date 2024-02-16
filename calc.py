@@ -26,15 +26,12 @@ def calculate():
             minute=0, second=0, microsecond=0
         )
         prev = now - pandas.Timedelta(hours=2)
-        next = now + pandas.Timedelta(hours=2)
-        horizon = now + pandas.Timedelta(hours=6)
-        # print(series[prev:next])
+        next = now + pandas.Timedelta(hours=3)
         current = series[now]
         short = series[prev:next].mean()
-        long = series[now:horizon].mean()
-        state = bool(current < short) | bool(current < long)
+        state = bool(current < short)
         print(
-            f'{datetime.datetime.now()}: {current:.4f} vs {short:.4f} or {long:.4f} - turning heater {"ON" if state else "OFF"}'
+            f'{datetime.datetime.now()}: {current:.4f} vs {short:.4f} - turning {"ON" if state else "OFF"}'
         )
         return state
     except Exception as e:
@@ -42,7 +39,8 @@ def calculate():
         return True
 
 
-state = calculate()
+override = pathlib.Path('./override')
+state = override.exists() or calculate()
 r = requests.put(f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": state}, timeout=10)
 # data = r.json()
 # print(data)
