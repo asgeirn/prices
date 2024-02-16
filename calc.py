@@ -10,6 +10,10 @@ import requests
 
 def calculate():
     try:
+        override = pathlib.Path(f"{datetime.date.today()}.override")
+        if override.exists():
+            print(f'{datetime.datetime.now()}: Override present - turning ON')
+            return True
         files = [
             f"{datetime.date.today() - datetime.timedelta(days=1)}.json",
             f"{datetime.date.today()}.json",
@@ -38,9 +42,7 @@ def calculate():
         print(f"Error calculating state: {e} - turning heater ON")
         return True
 
-
-override = pathlib.Path('./override')
-state = override.exists() or calculate()
+state = calculate()
 r = requests.put(f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": state}, timeout=10)
 # data = r.json()
 # print(data)
