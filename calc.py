@@ -8,11 +8,12 @@ import subprocess
 import pandas
 import requests
 
+
 def calculate():
     try:
         override = pathlib.Path(f"{datetime.date.today()}.override")
         if override.exists():
-            print(f'{datetime.datetime.now()}: Override present - turning ON')
+            print(f"{datetime.datetime.now()}: Override present - turning ON")
             return True
         files = [
             f"{datetime.date.today() - datetime.timedelta(days=1)}.json",
@@ -30,20 +31,23 @@ def calculate():
             minute=0, second=0, microsecond=0
         )
         prev = now - pandas.Timedelta(hours=2)
-        next = now + pandas.Timedelta(hours=3)
+        future = now + pandas.Timedelta(hours=3)
         current = series[now]
-        short = series[prev:next].mean()
-        state = bool(current < short)
+        horizon = series[prev:future].mean()
+        state = bool(current < horizon)
         print(
-            f'{datetime.datetime.now()}: {current:.4f} vs {short:.4f} - turning {"ON" if state else "OFF"}'
+            f'{datetime.datetime.now()}: {current:.4f} vs {horizon:.4f} - turning {"ON" if state else "OFF"}'
         )
         return state
     except Exception as e:
         print(f"Error calculating state: {e} - turning heater ON")
         return True
 
+
 state = calculate()
-r = requests.put(f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": state}, timeout=10)
+r = requests.put(
+    f"{os.environ['SWITCH_ENDPOINT']}/state", json={"on": state}, timeout=10
+)
 # data = r.json()
 # print(data)
 if r.status_code != requests.codes.ok:
