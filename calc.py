@@ -40,7 +40,9 @@ def calculate():
         )
         return state
     except Exception as e:
-        print(f"Error calculating state: {e} - turning heater ON")
+        print(
+            f"Error calculating state: {e.__class__.__name__}: {e} - turning heater ON"
+        )
         return True
 
 
