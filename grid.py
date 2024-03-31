@@ -10,32 +10,7 @@ def grid_fallback(day, nextday):
             start=day, end=nextday, freq="1H", inclusive="left", tz="Europe/Oslo"
         )
     )
-    data = [
-        0.38,
-        0.38,
-        0.38,
-        0.38,
-        0.38,
-        0.38,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.50,
-        0.38,
-        0.38,
-    ]
+    data = [0.50 if it.hour in range(6, 22) else 0.38 for it in index]
     series = pandas.Series(index=index, data=data)
     return series
 
@@ -60,16 +35,16 @@ def get_grid(day, nextday):
     print(f"{r.status_code}")
     if r.status_code == requests.codes.ok:
         data = r.json()
-        result = [
-            {"from": it["startTime"], "price": it["energyPrice"]["total"]}
+        result = {
+            it["startTime"]: it["energyPrice"]["total"]
             for it in data["gridTariff"]["tariffPrice"]["hours"]
-        ]
+        }
         if len(result) == 0:
             return fallback
-        dt = pandas.to_datetime([e["from"] for e in result], utc=True)
+        dt = pandas.to_datetime([it for it in result.keys()], utc=True)
         index = pandas.DatetimeIndex(dt)
         series = pandas.Series(
-            index=index, data=[e["price"] for e in result]
+            index=index, data=[it for it in result.values()]
         ).tz_convert(tz="Europe/Oslo")
         return series.combine_first(fallback)
     return fallback
