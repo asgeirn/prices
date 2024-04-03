@@ -1,5 +1,6 @@
 .direnv/
-.envrc
+.venv/
+__pycache__/
 .vscode
 *.log
-*.json
+20*.json
