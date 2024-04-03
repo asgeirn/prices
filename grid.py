@@ -41,10 +41,10 @@ def get_grid(day, nextday):
         }
         if len(result) == 0:
             return fallback
-        dt = pandas.to_datetime([it for it in result.keys()], utc=True)
+        dt = pandas.to_datetime(list(result.keys()), utc=True)
         index = pandas.DatetimeIndex(dt)
-        series = pandas.Series(
-            index=index, data=[it for it in result.values()]
-        ).tz_convert(tz="Europe/Oslo")
+        series = pandas.Series(index=index, data=list(result.values())).tz_convert(
+            tz="Europe/Oslo"
+        )
         return series.combine_first(fallback)
     return fallback
