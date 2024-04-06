@@ -10,7 +10,7 @@ def grid_fallback(day, nextday):
             start=day, end=nextday, freq="1H", inclusive="left", tz="Europe/Oslo"
         )
     )
-    data = [0.50 if it.hour in range(6, 22) else 0.38 for it in index]
+    data = [0.5075 if it.hour in range(6, 22) else 0.3875 for it in index]
     series = pandas.Series(index=index, data=data)
     return series
 
