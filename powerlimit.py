@@ -7,6 +7,9 @@ import subprocess
 import pandas
 import requests
 
+POWER_LIMIT_100 = int(os.getenv("POWER_LIMIT", "5000"))
+POWER_LIMIT_80 = POWER_LIMIT_100 * 0.8
+
 currentTime = datetime.datetime.utcnow()
 startTime = currentTime.replace(minute=0, second=0, microsecond=0)
 endTime = startTime + datetime.timedelta(hours=1)
@@ -34,7 +37,7 @@ if r.status_code == requests.codes.ok:
     series = pandas.Series(index=index, data=values)
     consumption = series.sum()
     estimate = consumption / progress
-    limit = consumption > 8000.0 or estimate > 9000.0
+    limit = consumption > POWER_LIMIT_80 or estimate > POWER_LIMIT_100
     print(
         f"{datetime.datetime.now().isoformat(sep=' ', timespec='minutes')} {consumption:.2f} (estimate {estimate:.2f}) Wh [{len(series)} items] {'!!!' if limit else ''}"
     )
