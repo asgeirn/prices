@@ -28,9 +28,11 @@ def get_power(date: datetime.date):
 
 def addfloat(x, y):
     if not isinstance(x, numpy.float64):
-        raise Exception(f"{x} is not numeric")
+        print(f"x={x} is not numeric, price will be wrong!")
+        return y
     if not isinstance(y, numpy.float64):
-        raise Exception(f"{y} is not numeric")
+        print(f"y={y} is not numeric, price will be wrong!")
+        return x
     return x + y
 
 

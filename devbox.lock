@@ -1,6 +1,198 @@
 {
   "lockfile_version": "1",
   "packages": {
+    "python39Packages.numpy@latest": {
+      "last_modified": "2022-12-17T09:19:40Z",
+      "resolved": "github:NixOS/nixpkgs/80c24eeb9ff46aa99617844d0c4168659e35175f#python39Packages.numpy",
+      "source": "devbox-search",
+      "version": "1.23.3",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/0gf2bby4fl5cvj8s42pqs7h97qx8wqzj-python3.9-numpy-1.23.3",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/yx308lgp9mbc40p2pdr6hk53wbp0l1ry-python3.9-numpy-1.23.3-dist"
+            }
+          ],
+          "store_path": "/nix/store/0gf2bby4fl5cvj8s42pqs7h97qx8wqzj-python3.9-numpy-1.23.3"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/211322wg7771iv3agrp186ix5n7irfw8-python3.9-numpy-1.23.3",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/xrdc7yvncd3abffz038hm15nv6xhkhfv-python3.9-numpy-1.23.3-dist"
+            }
+          ],
+          "store_path": "/nix/store/211322wg7771iv3agrp186ix5n7irfw8-python3.9-numpy-1.23.3"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/763xmjlndgpvlh9x4x0f1ff9hcvn58s6-python3.9-numpy-1.23.3",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/fag9h7ykyfn9f8kxw3b9dwh50ijq5ci4-python3.9-numpy-1.23.3-dist"
+            }
+          ],
+          "store_path": "/nix/store/763xmjlndgpvlh9x4x0f1ff9hcvn58s6-python3.9-numpy-1.23.3"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/72jan2m4g4024l60hcw9yr7ncknx7fbc-python3.9-numpy-1.23.3",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/yb38q71ji6fyb5f2n0171zfrvy7ljghl-python3.9-numpy-1.23.3-dist"
+            }
+          ],
+          "store_path": "/nix/store/72jan2m4g4024l60hcw9yr7ncknx7fbc-python3.9-numpy-1.23.3"
+        }
+      }
+    },
+    "python39Packages.pandas@latest": {
+      "last_modified": "2022-12-17T09:19:40Z",
+      "resolved": "github:NixOS/nixpkgs/80c24eeb9ff46aa99617844d0c4168659e35175f#python39Packages.pandas",
+      "source": "devbox-search",
+      "version": "1.4.4",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/hxx0pbjcy5xvlk6793aljd1k41238z16-python3.9-pandas-1.4.4",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/fsgj38i6wqxp0f9zakxk1gwqywqy5ncf-python3.9-pandas-1.4.4-dist"
+            }
+          ],
+          "store_path": "/nix/store/hxx0pbjcy5xvlk6793aljd1k41238z16-python3.9-pandas-1.4.4"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/b4ibdihhb8qidlfv1q8b48dc1kyzm6l0-python3.9-pandas-1.4.4",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/fi6880y579jv4xalp8bf587slcq3lay2-python3.9-pandas-1.4.4-dist"
+            }
+          ],
+          "store_path": "/nix/store/b4ibdihhb8qidlfv1q8b48dc1kyzm6l0-python3.9-pandas-1.4.4"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/m236jq2pphwhbm0df6drhndh9gbv9vk1-python3.9-pandas-1.4.4",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/dh9z7lpn21s31j2wdb04g550k5c8wv6y-python3.9-pandas-1.4.4-dist"
+            }
+          ],
+          "store_path": "/nix/store/m236jq2pphwhbm0df6drhndh9gbv9vk1-python3.9-pandas-1.4.4"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/3nxjcxdiq4l2gj61fgwbhy8ylh5vqm9v-python3.9-pandas-1.4.4",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/2b5cnk1hxwpy368k57ag9ppb9d8ml7zp-python3.9-pandas-1.4.4-dist"
+            }
+          ],
+          "store_path": "/nix/store/3nxjcxdiq4l2gj61fgwbhy8ylh5vqm9v-python3.9-pandas-1.4.4"
+        }
+      }
+    },
+    "python39Packages.requests@latest": {
+      "last_modified": "2022-12-17T09:19:40Z",
+      "resolved": "github:NixOS/nixpkgs/80c24eeb9ff46aa99617844d0c4168659e35175f#python39Packages.requests",
+      "source": "devbox-search",
+      "version": "2.28.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xz88kikjl7p5wmspizgwdj77175wkxnx-python3.9-requests-2.28.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/81xg0kn86w1p3h4938jmfs1gfg4yrins-python3.9-requests-2.28.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/xz88kikjl7p5wmspizgwdj77175wkxnx-python3.9-requests-2.28.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/01hj60vpjrh451vvb8c6h08w2c7s2br5-python3.9-requests-2.28.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/6ydahy8irlflw073dq4pmp7xdgnm5z86-python3.9-requests-2.28.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/01hj60vpjrh451vvb8c6h08w2c7s2br5-python3.9-requests-2.28.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/6jshk12c3iy3h8liyq69hnvk2lf49dch-python3.9-requests-2.28.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/k364mm8cvff5fwb1lpva77ahxdr187y7-python3.9-requests-2.28.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/6jshk12c3iy3h8liyq69hnvk2lf49dch-python3.9-requests-2.28.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/6vd2c6723w23vk37k07giyij62ik2lhb-python3.9-requests-2.28.1",
+              "default": true
+            },
+            {
+              "name": "dist",
+              "path": "/nix/store/z6x459lmq2ibwzl7cddg9ra3x59hablp-python3.9-requests-2.28.1-dist"
+            }
+          ],
+          "store_path": "/nix/store/6vd2c6723w23vk37k07giyij62ik2lhb-python3.9-requests-2.28.1"
+        }
+      }
+    },
     "python@3.9": {
       "last_modified": "2024-03-27T09:47:59Z",
       "plugin_version": "0.0.3",

@@ -1,6 +1,11 @@
 {
-  "$schema":  "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.2/.schema/devbox.schema.json",
-  "packages": ["python@3.9"],
+  "$schema": "https://raw.githubusercontent.com/jetpack-io/devbox/0.10.2/.schema/devbox.schema.json",
+  "packages": [
+    "python@3.9",
+    "python39Packages.numpy@latest",
+    "python39Packages.pandas@latest",
+    "python39Packages.requests@latest"
+  ],
   "env": {
     "VENV_DIR": ".venv"
   },
