@@ -16,7 +16,7 @@ def calculate():
             return True
         state = (
             datetime.datetime.now().minute > 0
-            or datetime.datetime.now().hour not in range(6, 21)
+            or datetime.datetime.now().hour not in range(6, 22)
         )
         print(f"{datetime.datetime.now()}: Turning heater {'ON' if state else 'OFF'}")
         return state
