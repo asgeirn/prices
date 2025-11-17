@@ -31,10 +31,10 @@ def calculate():
             minute=0, second=0, microsecond=0
         )
         prev = now - pandas.Timedelta(hours=2)
-        future = now + pandas.Timedelta(hours=3)
+        future = now + pandas.Timedelta(hours=2)
         current = series[now]
         horizon = series[prev:future].mean()
-        state = bool(current < horizon)
+        state = bool(current <= horizon)
         print(
             f'{datetime.datetime.now()}: {current:.4f} vs {horizon:.4f} - turning {"ON" if state else "OFF"}'
         )

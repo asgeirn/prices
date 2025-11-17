@@ -46,7 +46,8 @@ p = pathlib.Path(f"{day}.json")
 
 if not p.is_file():
     nextday = day + datetime.timedelta(days=1)
-    power = get_power(day)
+    #power = get_power(day)
     grid = get_grid(day, nextday)
-    cost = power.combine(grid, addfloat)
+    #cost = power.combine(grid, addfloat)
+    cost = grid + 0.5
     cost.to_json(path_or_buf=p, date_format="iso")
